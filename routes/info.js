@@ -6,6 +6,9 @@ const mongoose = require('mongoose');
 require('../models/Schemas');
 const Model = mongoose.model('record');
 
+// Express.js Middlewares
+router.use(express.json());
+router.use(express.urlencoded({ extended: false }));
 
 ///////////////////////////////////// MongoDB routes  //////////////////////////////////////////////
 router.post('/mongo/post', (req, res) => {
@@ -40,3 +43,7 @@ router.get('/mongo/search', (req, res) => {
 });
 
 ///////////////////////////////////// MongoDB routes end //////////////////////////////////////////////
+
+
+
+module.exports = router;

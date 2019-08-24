@@ -10,15 +10,11 @@ mongoose.connect(process.env.MONGO_URI,
     .then(() => console.log('MongoDB Connected...'))
     .catch(err => console.log(err));
 
-// Express.js Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
 // Express.js Routes
-const user = require("./routes/user");
+// const user = require("./routes/user");
 const info = require("./routes/info");
 
-app.use('/user', user);
+// app.use('/user', user);
 app.use('/info', info);
 
 
