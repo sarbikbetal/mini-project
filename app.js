@@ -11,10 +11,10 @@ mongoose.connect(process.env.MONGO_URI,
     .catch(err => console.log(err));
 
 // Express.js Routes
-// const user = require("./routes/user");
+const user = require("./routes/user");
 const info = require("./routes/info");
 
-// app.use('/user', user);
+app.use('/user', user);
 app.use('/info', info);
 
 
