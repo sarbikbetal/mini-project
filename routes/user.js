@@ -14,9 +14,19 @@ router.post('/pg/add', (req, res) => {
         if (err)
             res.json({ msg: "Error adding record", stack: err.stack });
         else
-            res.json(result.rows);
+            res.json({ key: apikey });
     });
 });
+
+router.get('/pg/info', (req, res) => {
+    let key = req.params.key
+    postgres.query('SELECT * FROM agencies WHERE apikey=$1', [key], (err, result) => {
+        if (err)
+            res.json({ msg: "Error adding record", stack: err.stack });
+        else
+            res.json(result.rows);
+    });
+})
 
 
 module.exports = router;
