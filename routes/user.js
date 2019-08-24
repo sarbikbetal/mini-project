@@ -10,7 +10,7 @@ router.use(express.urlencoded({ extended: false }));
 router.post('/pg/add', (req, res) => {
     let info = req.body;
     let apikey = uuid();
-    postgres.addUser([info.licence, info.name, info.address, info.contact.phone, info.contact.email || '', apikey], (err, result) => {
+    postgres.addUser([info.licence, info.name, info.address, info.contact, apikey], (err, result) => {
         if (err)
             res.json({ msg: "Error adding record", stack: err.stack });
         else
