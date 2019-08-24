@@ -19,7 +19,7 @@ router.post('/pg/add', (req, res) => {
 });
 
 router.get('/pg/info', (req, res) => {
-    let key = req.params.key
+    let key = req.query.key
     postgres.query('SELECT * FROM agencies WHERE apikey = $1', [key], (err, result) => {
         if (err)
             res.json({ msg: "Error adding record", stack: err.stack });
