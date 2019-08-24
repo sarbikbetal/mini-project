@@ -28,5 +28,14 @@ router.get('/pg/info', (req, res) => {
     });
 })
 
+router.get('/pg/all', (req, res) => {
+    postgres.query('SELECT * FROM agencies', [], (err, result) => {
+        if (err)
+            res.json({ msg: "Error adding record", stack: err.stack });
+        else
+            res.json(result.rows);
+    });
+})
+
 
 module.exports = router;
