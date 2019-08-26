@@ -5,7 +5,8 @@ const Schema = mongoose.Schema;
 const AgencySchema = new Schema({
     licence: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     name: {
         type: String,
@@ -21,8 +22,8 @@ const AgencySchema = new Schema({
     }
 });
 
-
-const MasterSchema = new Schema({
+// Post Disaster Scenario Development
+const Pdsd = new Schema({
     location: {
         type: String,
         required: true
@@ -35,8 +36,22 @@ const MasterSchema = new Schema({
         type: String,
         required: true
     },
-    info: [AgencySchema]
+    weather: {
+        type: String
+    },
+    situation: {
+        type: String
+    },
+    worsen: {
+        type: String
+    },
+    D_code: {
+        type: String
+    },
+    agencyID: {
+        type: String
+    }
 });
 
-mongoose.model('record', MasterSchema);
+mongoose.model('pdsd', Pdsd);
 mongoose.model('agency', AgencySchema);
