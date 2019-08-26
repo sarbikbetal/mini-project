@@ -16,13 +16,8 @@ const AgencySchema = new Schema({
         required: true
     },
     contact: {
-        email: {
-            type: String
-        },
-        phone: {
-            type: Number,
-            required: true
-        }
+        type: Number,
+        required: true
     }
 });
 
@@ -44,3 +39,4 @@ const MasterSchema = new Schema({
 });
 
 mongoose.model('record', MasterSchema);
+mongoose.model('agency', AgencySchema);
