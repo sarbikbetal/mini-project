@@ -13,7 +13,6 @@ pool.connect((err, client, release) => {
         return console.error('Error acquiring client', err.stack)
     }
     client.query("CREATE TABLE IF NOT EXISTS agencies (licence VARCHAR(15) NOT NULL PRIMARY KEY,name VARCHAR(120) NOT NULL, address TEXT NOT NULL, contact VARCHAR(12) NOT NULL, apikey VARCHAR(36))", (err, result) => {
-        release()
         if (err) {
             return console.error('Error executing query', err.stack)
         }
