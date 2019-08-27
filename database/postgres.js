@@ -18,7 +18,7 @@ pool.connect((err, client, release) => {
         }
         console.log(result.rows)
     })
-    client.query("CREATE TABLE IF NOT EXISTS pdsd (location VARCHAR(30) NOT NULL, co_ords float(4) [], date VARCHAR(10), weather TEXT, situation TEXT, worsen TEXT, D_code CHAR(2), agencyID VARCHAR(36)) NOT NULL", (err, result) => {
+    client.query("CREATE TABLE IF NOT EXISTS pdsd (location VARCHAR(30) NOT NULL, co_ords float(4) [], date VARCHAR(10), weather TEXT, situation TEXT, worsen TEXT, D_code CHAR(2), agencyID VARCHAR(36)) NOT NULL)", (err, result) => {
         release()
         if (err) {
             return console.error('Error executing query', err.stack)
