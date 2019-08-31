@@ -12,12 +12,20 @@ const AgencySchema = new Schema({
         type: String,
         required: true
     },
+    psswd: {
+        type: String,
+        required: true
+    },
     address: {
         type: String,
         required: true
     },
     contact: {
         type: Number,
+        required: true
+    },
+    token: {
+        type: String,
         required: true
     }
 });
@@ -52,6 +60,23 @@ const Pdsd = new Schema({
         type: String
     }
 });
+
+const HealthSchema = new Schema({
+    doctors: {
+        type: Number
+    },
+    bloodBanks: {
+        type: Number
+    },
+    casualty: {
+        dead: {
+            type: Number
+        },
+        injured: {
+            type: Number
+        }
+    }
+})
 
 mongoose.model('pdsd', Pdsd);
 mongoose.model('agency', AgencySchema);

@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const postgres = require('../database/postgres');
 const mongoose = require('mongoose');
 
 // Express.js Middlewares
@@ -73,62 +72,5 @@ router.get('/mongo/search', (req, res) => {
 
 ///////////////////////////////////// MongoDB routes end //////////////////////////////////////////////
 
-
-
-///////////////////////////////////// PostgreSQL routes ///////////////////////////////////////////////
-
-// router.post('/pg/post', (req, res) => {
-//     if (req.query.key) {
-//         let key = req.query.key
-//         Agency.findById(key, (err, result) => {
-//             if (err)
-//                 res.json({ msg: err });
-//             else if (!result)
-//                 res.sendStatus(404);
-//             else {
-//                 let info = req.body;
-//                 info.agencyID = result.licence;
-//                 new Pdsd(info).save()
-//                     .then(() => {
-//                         res.json({ msg: "Record added successfully" });
-//                     })
-//                     .catch((err) => {
-//                         res.json({ msg: err });
-//                     });
-//             }
-//         });
-//     } else {
-//         res.sendStatus(401);
-//     }
-// });
-
-// router.get('/pg/my', (req, res) => {
-//     if (req.query.key) {
-//         let key = req.query.key
-
-//         postgres.search(["pdsd","agencyID",key], (err, result) => {
-//             if (err)
-//                 res.json({ msg: "Error retrieving record", stack: err.stack });
-//             else if (!result)
-//                 res.sendStatus(404);
-//             else
-//                 res.json(result.rows);
-//         });
-//     } else {
-//         res.sendStatus(401);
-//     }
-// });
-
-// router.get('/pg/search', (req, res) => {
-//     Pdsd.find({ 'location': { $regex: req.query.words, $options: 'gi' } },
-//         (err, result) => {
-//             if (err)
-//                 res.json({ msg: err });
-//             else
-//                 res.json(result);
-//         });
-// });
-
-///////////////////////////////////// PostgreSQL routes end ///////////////////////////////////////////
 
 module.exports = router;

@@ -17,7 +17,6 @@ const info = require("./routes/info");
 app.use('/user', user);
 app.use('/info', info);
 
-
 //Server Init
 const port = process.env.PORT || 5000;
 const server = app.listen(port, () => {
