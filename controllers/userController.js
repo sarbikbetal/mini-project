@@ -52,10 +52,10 @@ let signUp = (info) => {
                     resolve({ auth_token: doc.token });
                 })
                 .catch((err) => {
-                    resolve({ msg: err });
+                    reject({ msg: err });
                 });
         }).catch((err) => {
-            resolve({ msg: err });
+            reject({ msg: err });
         })
     });
 }
@@ -64,14 +64,14 @@ let signIn = (pass, licence) => {
     return new Promise((resolve, reject) => {
         Agency.findOne({ licence: licence }, (err, result) => {
             if (err)
-                resolve({ msg: err.name });
+                reject({ msg: err.name });
             else if (!result)
-                resolve({ msg: "Licence number doesn't exist" })
+                reject({ msg: "Licence number doesn't exist" })
             else {
                 checkPwd(pass, result.psswd).then(() => {
                     resolve({ auth_token: result.token });
                 }).catch((msg) => {
-                    resolve({ msg: msg });
+                    reject({ msg: msg });
                 })
             }
         });

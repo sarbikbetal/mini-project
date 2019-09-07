@@ -9,21 +9,29 @@ router.use(express.urlencoded({ extended: false }));
 // User SignUp Route
 router.post('/signup', (req, res) => {
     let info = req.body;
-    userController.signUp(info).then((msg) => {
-        res.json(msg);
-    })
+    if (info) {
+        userController.signUp(info)
+            .then((msg) => {
+                res.json(msg);
+            }).catch((msg) => {
+                res.json(msg);
+            })
+    } else
+        res.sendStatus(400);
 
 });
 
 
 router.post('/signin', (req, res) => {
     if (req.body.licence && req.body.psswd) {
-        userController.signIn(req.body.psswd, req.body.licence).then((msg) => {
-            res.json(msg);
-        })
-    } else {
+        userController.signIn(req.body.psswd, req.body.licence)
+            .then((msg) => {
+                res.json(msg);
+            }).catch((msg) => {
+                res.status(403).json(msg);
+            })
+    } else
         res.sendStatus(403);
-    }
 });
 
 
