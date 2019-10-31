@@ -23,10 +23,6 @@ const AgencySchema = new Schema({
     contact: {
         type: Number,
         required: true
-    },
-    token: {
-        type: String,
-        required: true
     }
 });
 

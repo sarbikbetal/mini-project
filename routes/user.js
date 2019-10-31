@@ -28,16 +28,19 @@ router.post('/signin', (req, res) => {
             .then((msg) => {
                 res.json(msg);
             }).catch((msg) => {
-                res.status(403).json(msg);
+                res.status(401).json(msg);
             })
     } else
-        res.sendStatus(403);
+        res.sendStatus(400);
 });
 
 
 router.get('/info', (req, res) => {
-    if (req.body.token) {
-        let token = req.body.token;
+    const authHeader = req.headers['authorization'];
+    if (authHeader) {
+        const bearer = authHeader.split(' ');
+        const token = bearer[1];
+
         userController.userInfo(token).then((result) => {
             res.json(result);
         }).catch(() => {
@@ -48,7 +51,7 @@ router.get('/info', (req, res) => {
     }
 });
 
-router.put('/update', (req, res) => {
+router.put('/update', (req, res) => { // Invalid route
     if (req.body.token) {
         let token = req.body.token;
         userController.userInfo(token).then((result) => {
@@ -63,12 +66,11 @@ router.put('/update', (req, res) => {
 
 
 router.get('/mongo/all', (req, res) => {
-    Agency.find({}, (err, result) => {
-        if (err)
-            res.json({ msg: err });
-        else
-            res.json(result);
-    })
+    userController.getAllUser().then((result) => {
+        res.json(result);
+    }).catch(() => {
+        res.json(result);
+    });
 });
 
 
