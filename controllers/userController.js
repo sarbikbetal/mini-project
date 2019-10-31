@@ -101,6 +101,8 @@ let userInfo = (token) => {
                             contact: result.contact
                         });
                 });
+            }).catch((err) => {
+                reject(err);
             });
     });
 }

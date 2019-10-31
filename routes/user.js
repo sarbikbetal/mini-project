@@ -43,8 +43,8 @@ router.get('/info', (req, res) => {
 
         userController.userInfo(token).then((result) => {
             res.json(result);
-        }).catch(() => {
-            res.sendStatus(404);
+        }).catch((err) => {
+            res.status(400).json(err);
         });
     } else {
         res.sendStatus(401);

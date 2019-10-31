@@ -24,7 +24,7 @@ let JWTcheck = (token) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, jwtKey,(err, payload) => {
       if (err)
-        reject(err)
+        reject(err);
       else
         resolve(payload.licence);
     });
