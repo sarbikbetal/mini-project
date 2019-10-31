@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
-const uuid = require('uuid/v4');
+const uuid = require('uuid/v4');  // To be npm removed //
 const mongoose = require('mongoose');
+const jwtHelper = require('./jwtController');
 
 // MongoDB routes
 require('../models/Schemas');
@@ -13,7 +14,6 @@ class User { // Custom User Class //
         this.address = o.address;
         this.contact = o.contact;
         this.psswd = o.psswd;
-        this.token = uuid();
     }
 };
 
@@ -28,7 +28,7 @@ let hashPwd = (user) => {
                 resolve();
             }
         });
-    })
+    });
 };
 
 let checkPwd = (password, hash) => {
@@ -39,24 +39,26 @@ let checkPwd = (password, hash) => {
             else
                 reject("Licence and Password doesn't match")
         });
-    })
+    });
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 let signUp = (info) => {
     return new Promise((resolve, reject) => {
         let newUser = new User(info);
-        hashPwd(newUser).then(() => {
-            new Agency(newUser).save()
-                .then((doc) => {
-                    resolve({ auth_token: doc.token });
-                })
-                .catch((err) => {
-                    reject({ msg: err });
-                });
-        }).catch((err) => {
-            reject({ msg: err });
-        })
+        hashPwd(newUser)
+            .then(() => {
+                return new Agency(newUser).save();
+            })
+            .then((doc) => {
+                return jwtHelper.JWTgen(doc);
+            })
+            .then((token) => {
+                resolve({ auth_token: token });
+            })
+            .catch((err) => {
+                reject({ msg: err });
+            });
     });
 }
 
@@ -68,11 +70,16 @@ let signIn = (pass, licence) => {
             else if (!result)
                 reject({ msg: "Licence number doesn't exist" })
             else {
-                checkPwd(pass, result.psswd).then(() => {
-                    resolve({ auth_token: result.token });
-                }).catch((msg) => {
-                    reject({ msg: msg });
-                })
+                checkPwd(pass, result.psswd)
+                    .then(() => {
+                        return jwtHelper.JWTgen(result);
+                    })
+                    .then((token) => {
+                        resolve({ auth_token: token });
+                    })
+                    .catch((msg) => {
+                        reject({ msg: msg });
+                    })
             }
         });
     });
@@ -80,20 +87,23 @@ let signIn = (pass, licence) => {
 
 let userInfo = (token) => {
     return new Promise((resolve, reject) => {
-        Agency.findOne({ token: token }, (err, result) => {
-            if (err)
-                resolve({ msg: err.name });
-            else if (!result)
-                reject({ msg: "Invalid Auth token" });
-            else
-                resolve({
-                    licence: result.licence,
-                    name: result.name,
-                    address: result.address,
-                    contact: result.contact
+        jwtHelper.JWTcheck(token)
+            .then((licence) => {
+                Agency.findOne({ licence: licence }, (err, result) => {
+                    if (err)
+                        resolve({ msg: err.name });
+                    else if (!result)
+                        reject({ msg: "Authentication error" });
+                    else
+                        resolve({
+                            licence: result.licence,
+                            name: result.name,
+                            address: result.address,
+                            contact: result.contact
+                        });
                 });
-        });
-    })
+            });
+    });
 }
 
 let updateUser = (token, data) => {
@@ -113,10 +123,22 @@ let updateUser = (token, data) => {
     });
 }
 
+let getAllUser = () => {
+    return new Promise((resolve, reject) => {
+        Agency.find({}, (err, result) => {
+            if (err)
+                reject({ msg: err });
+            else
+                resolve(result);
+        })
+    })
+}
+
 // Exports //
 module.exports = {
     signUp: signUp,
     signIn: signIn,
     userInfo: userInfo,
-    updateUser: updateUser
+    updateUser: updateUser,
+    getAllUser: getAllUser
 }
