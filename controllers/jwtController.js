@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 // JWT Secret
 const jwtKey = process.env.SECRET;
-const jwtExpiry = "5d";
+const jwtExpiry = "7d";
 
 ///////////////////////////// JWT Generation and Validation //////////////////////////////////////
 

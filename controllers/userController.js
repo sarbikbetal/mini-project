@@ -24,7 +24,7 @@ let hashPwd = (user) => {
                 reject(err);
             else {
                 user.psswd = hash;
-                resolve();
+                resolve(user);
             }
         });
     });
@@ -109,18 +109,25 @@ let userInfo = (token) => {
 
 let updateUser = (token, data) => {
     return new Promise((resolve, reject) => {
-        let pass = data.psswd;
-        hashPwd(data).then(() => {
-            Agency.findOneAndUpdate({ token: token }, { $set: { psswd: data.psswd } }, { new: true })
-                .then((doc) => {
-                    if (doc)
-                        resolve();
-                    else
-                        reject({ msg: "no such user exist" });
-                });
-        }).catch((err) => {
-            reject({ msg: err });
-        })
+        let user = new User(data);
+        jwtHelper.JWTcheck(token)
+            .then(() => {
+                return hashPwd(user);
+            })
+            .then((newUser) => {
+                console.log(newUser);
+                Agency.findOneAndUpdate(
+                    { licence: newUser.licence },
+                    { psswd: newUser.psswd, contact: newUser.contact, address: newUser.address },
+                    { new: true }, (err, doc, res) => {
+                        if (doc)
+                            resolve(doc, res);
+                        else
+                            reject(err, res);
+                    });
+            }).catch((err) => {
+                reject(err);
+            });
     });
 }
 

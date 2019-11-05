@@ -51,13 +51,16 @@ router.get('/info', (req, res) => {
     }
 });
 
-router.put('/update', (req, res) => { // Invalid route
-    if (req.body.token) {
-        let token = req.body.token;
-        userController.userInfo(token).then((result) => {
+router.put('/update', (req, res) => {
+    const authHeader = req.headers['authorization'];
+    if (authHeader) {
+        const bearer = authHeader.split(' ');
+        const token = bearer[1];
+
+        userController.updateUser(token, req.body).then((result) => {
             res.json(result);
-        }).catch(() => {
-            res.sendStatus(404);
+        }).catch((err) => {
+            res.status(404).json(err);
         });
     } else {
         res.sendStatus(401);
@@ -65,7 +68,7 @@ router.put('/update', (req, res) => { // Invalid route
 })
 
 
-router.get('/mongo/all', (req, res) => {
+router.get('/all', (req, res) => {
     userController.getAllUser().then((result) => {
         res.json(result);
     }).catch(() => {
