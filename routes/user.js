@@ -53,7 +53,7 @@ router.get('/info', (req, res) => {
 
 router.put('/update', (req, res) => {
     const authHeader = req.headers['authorization'];
-    if (authHeader) {
+    if (authHeader && req.body.licence && req.body.psswd && req.body.old) {
         const bearer = authHeader.split(' ');
         const token = bearer[1];
 
@@ -63,7 +63,7 @@ router.put('/update', (req, res) => {
             res.status(404).json(err);
         });
     } else {
-        res.sendStatus(401);
+        res.sendStatus(400);
     }
 })
 

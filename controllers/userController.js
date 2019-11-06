@@ -33,10 +33,8 @@ let hashPwd = (user) => {
 let checkPwd = (password, hash) => {
     return new Promise((resolve, reject) => {
         bcrypt.compare(password, hash, (err, res) => {
-            if (res)
-                resolve()
-            else
-                reject("Licence and Password doesn't match")
+            if (res) resolve();
+            else reject("Licence and Password doesn't match");
         });
     });
 }
@@ -108,37 +106,36 @@ let userInfo = (token) => {
 }
 
 let updateUser = (token, data) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let user = new User(data);
-        jwtHelper.JWTcheck(token)
-            .then(() => {
-                Agency.findOne({ licence: user.licence }, (err, result) => {
-                    if (err)
-                        reject({ msg: err.name });
-                    else if (!result)
-                        reject({ msg: "Licence number doesn't exist" })
-                    else {
-                        checkPwd(data.old, result.psswd)
-                            .then(() => {
-                                return hashPwd(user);
-                            })
-                            .then((newUser) => {
-                                Agency.findOneAndUpdate(
-                                    { licence: newUser.licence },
-                                    { name: newUser.name, psswd: newUser.psswd, contact: newUser.contact, address: newUser.address },
-                                    { new: true }, (err, doc) => {
-                                        if (doc)
-                                            resolve(doc);
-                                        else
-                                            reject(err);
-                                    });
-                            })
-                            .catch((msg) => {
-                                reject({ msg: msg });
-                            })
-                    }
-                })
+        let rslt;
+        try {
+            await jwtHelper.JWTcheck(token)
+            await Agency.findOne({ licence: user.licence }).then((result) => {
+                if (!result)
+                    reject({ msg: "Licence number doesn't exist" })
+                else
+                    rslt = result;
+            }).catch((err) => {
+                reject({ msg: err.name });
             })
+            checkPwd(data.old, rslt.psswd).then(async () => {
+                let newUser = await hashPwd(user);
+                return Agency.findOneAndUpdate(
+                    { licence: newUser.licence },
+                    { name: newUser.name, psswd: newUser.psswd, contact: newUser.contact, address: newUser.address },
+                    { new: true }, (err, doc) => {
+                        if (doc)
+                            resolve(doc);
+                        else
+                            reject(err);
+                    });
+            }).catch((err) => {
+                reject({ err: err });
+            })
+        } catch (error) {
+            reject({ err: error });
+        }
     });
 }
 
