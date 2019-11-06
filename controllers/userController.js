@@ -112,22 +112,33 @@ let updateUser = (token, data) => {
         let user = new User(data);
         jwtHelper.JWTcheck(token)
             .then(() => {
-                return hashPwd(user);
+                Agency.findOne({ licence: user.licence }, (err, result) => {
+                    if (err)
+                        reject({ msg: err.name });
+                    else if (!result)
+                        reject({ msg: "Licence number doesn't exist" })
+                    else {
+                        checkPwd(data.old, result.psswd)
+                            .then(() => {
+                                return hashPwd(user);
+                            })
+                            .then((newUser) => {
+                                Agency.findOneAndUpdate(
+                                    { licence: newUser.licence },
+                                    { name: newUser.name, psswd: newUser.psswd, contact: newUser.contact, address: newUser.address },
+                                    { new: true }, (err, doc) => {
+                                        if (doc)
+                                            resolve(doc);
+                                        else
+                                            reject(err);
+                                    });
+                            })
+                            .catch((msg) => {
+                                reject({ msg: msg });
+                            })
+                    }
+                })
             })
-            .then((newUser) => {
-                console.log(newUser);
-                Agency.findOneAndUpdate(
-                    { licence: newUser.licence },
-                    { psswd: newUser.psswd, contact: newUser.contact, address: newUser.address },
-                    { new: true }, (err, doc, res) => {
-                        if (doc)
-                            resolve(doc, res);
-                        else
-                            reject(err, res);
-                    });
-            }).catch((err) => {
-                reject(err);
-            });
     });
 }
 
