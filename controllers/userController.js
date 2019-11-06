@@ -125,8 +125,16 @@ let updateUser = (token, data) => {
                     { licence: newUser.licence },
                     { name: newUser.name, psswd: newUser.psswd, contact: newUser.contact, address: newUser.address },
                     { new: true }, (err, doc) => {
-                        if (doc)
-                            resolve(doc);
+                        if (doc) {
+                            jwtHelper.JWTgen(doc).then((token) => {
+                                let updatedUser = new User(doc);
+                                delete updatedUser.psswd;
+                                updatedUser.auth_token = token;
+                                resolve(updatedUser);
+                            }).catch((err) => {
+                                reject(err);
+                            })
+                        }
                         else
                             reject(err);
                     });
