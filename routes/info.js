@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
+const recordController = require('../controllers/recordController');
 
 // Express.js Middlewares
 router.use(express.json());
@@ -8,66 +8,46 @@ router.use(express.urlencoded({ extended: false }));
 
 ///////////////////////////////////// MongoDB routes  //////////////////////////////////////////////
 
-// Load the schema for MongoDB records
-require('../models/Schemas');
-const Pdsd = mongoose.model('pdsd');
-const Agency = mongoose.model('agency');
+router.post('/newPost', (req, res) => {
+    const authHeader = req.headers['authorization'];
+    if (authHeader) {
+        const bearer = authHeader.split(' ');
+        const token = bearer[1];
 
-router.post('/mongo/post', (req, res) => {
-    if (req.query.key) {
-        let key = req.query.key
-        Agency.findById(key, (err, result) => {
-            if (err)
-                res.json({ msg: err });
-            else if (!result)
-                res.sendStatus(404);
-            else {
-                let info = req.body;
-                info.agencyID = result.licence;
-                new Pdsd(info).save()
-                    .then(() => {
-                        res.json({ msg: "Record added successfully" });
-                    })
-                    .catch((err) => {
-                        res.json({ msg: err });
-                    });
-            }
+        recordController.newPost(req.body, token).then((result) => {
+            res.json(result);
+        }).catch((err) => {
+            res.status(400).json(err);
         });
     } else {
-        res.sendStatus(401);
+        res.sendStatus(400).json({ "err": "Invalid request" });
     }
 });
 
-router.get('/mongo/my', (req, res) => {
-    if (req.query.key) {
-        let key = req.query.key
-        Agency.findById(key, (err, result) => {
-            if (err)
-                res.json({ msg: err });
-            else if (!result)
-                res.sendStatus(404);
-            else
-                Pdsd.find({ 'agencyID': result.licence },
-                    (err, result) => {
-                        if (err)
-                            res.json({ msg: err });
-                        else
-                            res.json(result);
-                    });
+router.get('/my', (req, res) => {
+    const authHeader = req.headers['authorization'];
+    if (authHeader) {
+        const bearer = authHeader.split(' ');
+        const token = bearer[1];
+
+        recordController.myPosts(token).then((result) => {
+            res.json(result);
+        }).catch((err) => {
+            res.status(400).json(err);
         });
     } else {
-        res.sendStatus(401);
+        res.sendStatus(400).json({ "msg": "Invalid request" });
     }
 });
 
-router.get('/mongo/search', (req, res) => {
-    Pdsd.find({ 'location': { $regex: req.query.words, $options: 'gi' } },
-        (err, result) => {
-            if (err)
-                res.json({ msg: err });
-            else
-                res.json(result);
-        });
+router.get('/search', (req, res) => {
+    if (req.query.words) {
+        recordController.search(req.query.words).then((result) => {
+            res.json(result);
+        }).catch((err) => {
+            res.status(500).json(err);
+        })
+    } else res.status(400);
 });
 
 ///////////////////////////////////// MongoDB routes end //////////////////////////////////////////////
