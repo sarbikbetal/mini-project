@@ -47,7 +47,7 @@ router.get('/info', (req, res) => {
             res.status(400).json(err);
         });
     } else {
-        res.sendStatus(401);
+        res.sendStatus(400).json({"msg": "Invalid request"});
     }
 });
 
@@ -63,7 +63,7 @@ router.put('/update', (req, res) => {
             res.status(404).json(err);
         });
     } else {
-        res.sendStatus(400);
+        res.sendStatus(400).json({"msg": "Invalid request"});;
     }
 })
 

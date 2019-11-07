@@ -139,10 +139,10 @@ let updateUser = (token, data) => {
                             reject(err);
                     });
             }).catch((err) => {
-                reject({ err: err });
+                reject({ msg: err });
             })
         } catch (error) {
-            reject({ err: error });
+            reject({ msg: error });
         }
     });
 }
