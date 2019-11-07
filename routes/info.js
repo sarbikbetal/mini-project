@@ -50,6 +50,13 @@ router.get('/search', (req, res) => {
     } else res.status(400);
 });
 
+router.get('/all', (req, res) => {
+    recordController.getAllRecords().then((result) => {
+        res.json(result);
+    }).catch(() => {
+        res.json(result);
+    });
+});
 ///////////////////////////////////// MongoDB routes end //////////////////////////////////////////////
 
 

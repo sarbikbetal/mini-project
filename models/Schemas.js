@@ -58,6 +58,9 @@ const Pdsd = new Schema({
 });
 
 const HealthSchema = new Schema({
+    disaster: {
+        type: String
+    },
     doctors: {
         type: Number
     },

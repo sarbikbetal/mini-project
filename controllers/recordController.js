@@ -62,9 +62,21 @@ let search = (keyword) => {
   })
 }
 
+let getAllRecords = () => {
+  return new Promise((resolve, reject) => {
+    Pdsd.find({}, (err, result) => {
+      if (err)
+        reject({ msg: err });
+      else
+        resolve(result);
+    })
+  })
+}
+
 //Exports//
 module.exports = {
   newPost: newPost,
   myPosts: myPosts,
-  search: search
+  search: search,
+  getAllRecords: getAllRecords
 }
