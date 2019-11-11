@@ -8,27 +8,27 @@ const Agency = mongoose.model('agency');
 
 let newPost = (info, token) => {
   return new Promise((resolve, reject) => {
+    var dateRE = /^\d{4}(\.)(((0)[0-9])|((1)[0-2]))(\.)([0-2][0-9]|(3)[0-1])$/;
+    if (!dateRE.test(info.date))
+      reject({ err: "Please format the date as YYYY.MM.DD" });
+      
     jwtHelper.JWTcheck(token)
       .then((licence) => {
-        Agency.findOne({ licence: licence }, (err, result) => {
-          if (err)
-            resolve({ err: err.name });
-          else if (!result)
-            reject({ err: "Authentication error" });
-          else {
-            info.agencyID = result.licence;
-            new Pdsd(info).save()
-              .then(() => {
-                resolve({ msg: "Record added successfully" });
-              })
-              .catch((err) => {
-                reject({ err: err });
-              });
-          }
-        });
+        return Agency.findOne({ licence: licence })
       }).catch((err) => {
-        reject(err);
-      });
+        reject({ err: err.name });
+      }).then((result) => {
+        if (!result)
+          reject({ err: "Authentication error" });
+        else {
+          info.agencyID = result.licence;
+          return new Pdsd(info).save()
+        }
+      }).then(() => {
+        resolve({ msg: "Record added successfully" });
+      }).catch((err) => {
+        reject({ err: err });
+      })
   })
 }
 
