@@ -37,38 +37,33 @@ let myPosts = (token) => {
   return new Promise((resolve, reject) => {
     jwtHelper.JWTcheck(token)
       .then((licence) => {
-        Pdsd.find({ 'agencyID': licence },
-          (err, result) => {
-            if (err)
-              reject({ err: err });
-            else
-              resolve(result);
-          });
-      }).catch((err) => {
-        reject(err);
+        return Pdsd.find({ 'agencyID': licence }).sort('-date');
+      }).then((results) => {
+        resolve(results);
+      })
+      .catch((err) => {
+        reject({ err: err });
       });
   });
 }
 
 let search = (keyword) => {
   return new Promise((resolve, reject) => {
-    Pdsd.find({ 'location': { $regex: keyword, $options: 'gi' } },
-      (err, result) => {
-        if (err)
-          reject({ err: err });
-        else
-          resolve(result);
+    Pdsd.find({ 'location': { $regex: keyword, $options: 'gi' } }).sort('location')
+      .then((result) => {
+        resolve(result);
+      }).catch((err) => {
+        reject({ err: err });
       });
-  })
+  });
 }
 
 let getAllRecords = () => {
   return new Promise((resolve, reject) => {
-    Pdsd.find({}, (err, result) => {
-      if (err)
-        reject({ msg: err });
-      else
-        resolve(result);
+    Pdsd.find({}).sort('-date').then((records) => {
+      resolve(records);
+    }).catch((err) => {
+      reject({ err: err });
     })
   })
 }
