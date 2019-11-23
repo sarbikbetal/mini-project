@@ -13,8 +13,8 @@ router.post('/signup', (req, res) => {
         userController.signUp(info)
             .then((msg) => {
                 res.json(msg);
-            }).catch((msg) => {
-                res.json(msg);
+            }).catch((err) => {
+                res.json(err);
             })
     } else
         res.sendStatus(400);
@@ -27,8 +27,8 @@ router.post('/signin', (req, res) => {
         userController.signIn(req.body.psswd, req.body.licence)
             .then((msg) => {
                 res.json(msg);
-            }).catch((msg) => {
-                res.status(401).json(msg);
+            }).catch((err) => {
+                res.status(401).json(err);
             })
     } else
         res.sendStatus(400);
@@ -47,7 +47,7 @@ router.get('/info', (req, res) => {
             res.status(400).json(err);
         });
     } else {
-        res.sendStatus(400).json({"msg": "Invalid request"});
+        res.sendStatus(400).json({"err": "Invalid request"});
     }
 });
 
@@ -63,7 +63,7 @@ router.put('/update', (req, res) => {
             res.status(404).json(err);
         });
     } else {
-        res.sendStatus(400).json({"msg": "Invalid request"});;
+        res.sendStatus(400).json({"err": "Invalid request"});;
     }
 })
 

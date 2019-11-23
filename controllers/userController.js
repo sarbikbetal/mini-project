@@ -33,7 +33,7 @@ let checkPwd = (password, hash) => {
         bcrypt.compare(password, hash).then((res) => {
             if (res) resolve();
             else reject("Licence and Password doesn't match");
-        }).catch(err => {
+        }).catch((err) => {
             reject({ err: err });
         })
     });
@@ -55,8 +55,8 @@ let signUp = (info) => {
             })
             .catch((err) => {
                 if (err.code == 11000)
-                    reject({ msg: "User with licence " + newUser.licence + " exists" });
-                reject({ msg: err });
+                    reject({ err: "User with licence " + newUser.licence + " exists" });
+                reject({ err: err });
             });
     });
 }
@@ -70,7 +70,7 @@ let signIn = (pass, licence) => {
                     return result;
                 }
                 else
-                    reject({ msg: "Licence number doesn't exist" })
+                    reject({ err: "Licence number doesn't exist" })
             })
             .then((result) => {
                 return jwtHelper.JWTgen(result);
@@ -79,7 +79,7 @@ let signIn = (pass, licence) => {
                 resolve({ auth_token: token });
             })
             .catch((msg) => {
-                reject({ msg: msg });
+                reject({ err: msg });
             })
     });
 }
@@ -90,9 +90,9 @@ let userInfo = (token) => {
             .then((licence) => {
                 Agency.findOne({ licence: licence }, (err, result) => {
                     if (err)
-                        resolve({ msg: err.name });
+                        resolve({ err: err.name });
                     else if (!result)
-                        reject({ msg: "Authentication error" });
+                        reject({ err: "Authentication error" });
                     else
                         resolve({
                             licence: result.licence,
@@ -115,11 +115,11 @@ let updateUser = (token, data) => {
             await jwtHelper.JWTcheck(token)
             await Agency.findOne({ licence: user.licence }).then((result) => {
                 if (!result)
-                    reject({ msg: "Licence number doesn't exist" })
+                    reject({ err: "Licence number doesn't exist" })
                 else
                     rslt = result;
             }).catch((err) => {
-                reject({ msg: err.name });
+                reject({ err: err.name });
             })
             checkPwd(data.old, rslt.psswd).then(async () => {
                 let newUser = await hashPwd(user);
@@ -141,10 +141,10 @@ let updateUser = (token, data) => {
                             reject(err);
                     });
             }).catch((err) => {
-                reject({ msg: err });
+                reject({ err: err });
             })
-        } catch (error) {
-            reject({ msg: error });
+        } catch (err) {
+            reject({ err: err });
         }
     });
 }
@@ -153,7 +153,7 @@ let getAllUser = () => {
     return new Promise((resolve, reject) => {
         Agency.find({}, (err, result) => {
             if (err)
-                reject({ msg: err });
+                reject({ err: err });
             else
                 resolve(result);
         })

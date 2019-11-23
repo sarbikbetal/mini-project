@@ -36,7 +36,7 @@ router.get('/my', (req, res) => {
             res.status(400).json(err);
         });
     } else {
-        res.sendStatus(400).json({ "msg": "Invalid request" });
+        res.sendStatus(400).json({ "err": "Invalid request" });
     }
 });
 
